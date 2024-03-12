@@ -99,19 +99,20 @@ async function reroute(){
     
   } catch (error) {
     console.log(error)
-    // again()
+    
   }
-  // await browser.close();
+  
 };
 
 const arr=reroute();
 
-const data = arr.then((res)=>{
-  console.log(res);
+let data2;
+
+
+const data = arr.then((response)=>{
+  res.json({data:response});
+  console.log({data:response})
 });
-
-
-res.json({data:data})
 
 
 })
