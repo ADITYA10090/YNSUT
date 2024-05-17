@@ -13,7 +13,7 @@ const AttendanceComp = () => {
 useEffect(()=>{
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://10.100.238.174:5000/attendance');
+      const response = await axios.get('http://192.168.1.7:5000/attendance');
       // const res2 = await axios.get('http://192.168.105.71:5000/captchareq');
       
         // const jsonlink=JSON.stringify(res2);
@@ -36,7 +36,11 @@ useEffect(()=>{
     }
   };
   fetchData();
-})
+  return () => {
+    // Cleanup code (e.g., unsubscribe from a WebSocket or cancel a timer)
+  };
+
+},[])
     
 
 

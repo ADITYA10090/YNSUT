@@ -2,9 +2,10 @@ import axios from 'axios';
 import React, { useState, useRef,useEffect } from 'react';
 import { View, TextInput, StyleSheet,Button,Image, Platform } from 'react-native';
 import * as FileSystem from 'expo-file-system'
+// import asyncstorage from "@react-native"
 let jsonData;
 const OTPInput = ({ length,navigation }) => {
-  length=5
+  length=5;
   const [otp, setOTP] = useState(Array(length).fill(''));
   const[dummy,setDummy]=useState(null);
   const otpInputs = useRef([]);
@@ -31,7 +32,7 @@ const OTPInput = ({ length,navigation }) => {
   async function getCaptcha (){
       console.log("hello");
       try {
-          const linkresponse = await axios.get("http://10.100.238.174:5000/getcaptcha")
+          const linkresponse = await axios.get("http://192.168.1.7:5000/getcaptcha")
           const src='data:image/jpeg;base64,' + linkresponse.data;
           // setImagesrc(null);
           setImagesrc(src);
@@ -44,7 +45,7 @@ const OTPInput = ({ length,navigation }) => {
 
   async function OtpSubmit(){
     console.log(otp);
-    await axios.post("http://10.100.238.174:5000/sendcaptcha",{otp});
+    await axios.post("http://192.168.1.7:5000/sendcaptcha",{otp});
     navigation.navigate("Attendance")
 
   }

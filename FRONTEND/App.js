@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { View, StyleSheet,Button,Image } from 'react-native';
 import OTPInput from './prj/OTPInput.js';
 import AttendanceComp from './prj/fetching.js';
+import Login from './prj/User_Login.js';
 
 const Stack = createNativeStackNavigator();
 
@@ -11,7 +12,8 @@ const App = () => {
   return (
     <NavigationContainer>
        <Stack.Navigator initialRouteName="First">
-        <Stack.Screen name="Login" component={OTPInput}/>
+        <Stack.Screen name="Login" component={Login}/>
+        <Stack.Screen name="OTPpage" component={OTPInput}/>
         <Stack.Screen name="Attendance" component={AttendanceComp}/>
        </Stack.Navigator>
     </NavigationContainer>

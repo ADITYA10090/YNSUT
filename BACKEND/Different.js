@@ -8,6 +8,7 @@ import tesseract from 'node-tesseract-ocr'
 import { log } from 'console'
 import { rejects } from 'assert'
 
+const map=new Map();
 let browser;
 let page;
 let link;
@@ -18,6 +19,8 @@ let texting;
 let OK=false;
 let finale;
 let OTPvalue;
+const pages=[];
+const frames=[];
 const config = {
   lang: "eng", // default
   oem: 3,
@@ -58,6 +61,10 @@ function randomNumber(min, max) {
         });
     });
 }
+let n=0;
+function generateNewNumber(){
+
+}
 function waitForCondition() {
   return new Promise((resolve) => {
     const intervalId = setInterval(() => {
@@ -96,19 +103,38 @@ async function getAttendance(){
   
 //   mlFunc()
 // })
+
+const f_s=[];
+const links=[];
+const pages2=[];
+const viewSources=[];
+const base64Images=[];
+const f2s=[];
+const frame2s=[];
+const thTexts=[];
+const imageNames=[];
+// const thElements=[];
+const attendanceArray=[];
+const finales=[];
+const dataprocessed=[];
+
 app.get('/getcaptcha',(req,res)=>{
     async function getCaptcha(){
-    page = await browser.newPage();
+    n=n+1;
+    // n = generateNewNumber();
+    map.set(n,req.headers['x-unique-identifier']);
+    pages[n]=await browser.newPage();
+    // page = await browser.newPage();
     // await page.goto('https://www.google.com',{waitUntil:'networkidle0'});
-    await page.goto('https://www.imsnsit.org',{waitUntil:'networkidle0'});
-    await page.goto('https://www.imsnsit.org/imsnsit/student.htm',{waitUntil:'networkidle0'});
-    f = await page.$("frame[name='banner']")
-    frame =  await f.contentFrame();
-    link=await frame.$eval('#captchaimg', el => el.src);
-    console.log(link);
-    const page2=await browser.newPage()
-    const viewSource=await page2.goto(link);
-    fs.writeFile("./imgtes.jpg",await viewSource.buffer(),function(err){
+    await pages[n].goto('https://www.imsnsit.org',{waitUntil:'networkidle0'});
+    await pages[n].goto('https://www.imsnsit.org/imsnsit/student.htm',{waitUntil:'networkidle0'});
+    f_s[n] = await pages[n].$("frame[name='banner']")
+    frames[n] =  await f_s[n].contentFrame();
+    links[n]=await frames[n].$eval('#captchaimg', el => el.src);
+    console.log(links[n]);
+    pages2[n]=await browser.newPage()
+    viewSources[n]=await pages2[n].goto(links[n]);
+    fs.writeFile('./imgtes.jpg',await viewSources[n].buffer(),function(err){
         if (err){
           return console.log(err)
         }
@@ -116,20 +142,21 @@ app.get('/getcaptcha',(req,res)=>{
     fs.readFile('./imgtes.jpg', (err, data) => { 
         if (err) {
             console.log(err);
-            reject(err);
+            // reject(err);
         } else {
-            const base64Image = Buffer.from(data).toString('base64');
-            res.send(base64Image)
+             base64Images[n] = Buffer.from(data).toString('base64');
+            res.send(base64Images[n])
         }
     })
-    await frame.$eval('#uid', el => el.value = '2022UIT3020');
-    await frame.$eval('#pwd', el => el.value = 'rpdqbd^');
-    await page.bringToFront();
+    await frames[n].$eval('#uid', el => el.value = '2022UIT3054');
+    await frames[n].$eval('#pwd', el => el.value = 'wrchb~0');
+    await pages[n].bringToFront();
     return ;
-    }
+    }//
     const callfunc=getCaptcha();
 
     //wrchb~0
+    //rpdqbd^
 })
 
 app.post('/sendcaptcha',(req,res)=>{
@@ -138,52 +165,52 @@ app.post('/sendcaptcha',(req,res)=>{
     const {otp}=await req.body
     console.log(otp);
     OTPvalue=otp;
-    
-    await frame.type("#cap",OTPvalue);
+
+    await frames[n].type("#cap",OTPvalue);
     await delay(500);
-    await frame.click('#login')
+    await frames[n].click('#login')
     await delay(500)
-    f = await page.$("frame[name='banner']")
-    frame =  await f.contentFrame();
+    f_s[n] = await pages[n].$("frame[name='banner']")
+    frames[n] =  await f_s[n].contentFrame();
     await delay(500);
     // await frame.click('xpath=/html/body/table/tbody/tr[1]/td/table/tbody/tr[2]/td[1]/table/tbody/tr/td[5]/a')
-    await frame.click('body > table > tbody > tr:nth-child(1) > td > table > tbody > tr:nth-child(2) > td:nth-child(1) > table > tbody > tr > td:nth-child(5) > a')
+    await frames[n].click('body > table > tbody > tr:nth-child(1) > td > table > tbody > tr:nth-child(2) > td:nth-child(1) > table > tbody > tr > td:nth-child(5) > a')
     // await page.mouse.click(250,107)
      await delay(500)
-     await page.mouse.click(17,327)
+     await pages[n].mouse.click(17,327)
     //  await page.screenshot({path:'./image2.jpg'})
      await delay(500)//
-     await page.mouse.click(64,350)
+     await pages[n].mouse.click(64,350)
      await delay(500)
     console.log("POINT 2")
     // await page.screenshot({path:'./image3.jpg'})
      
-    const f2=await page.$("frame[name='data']")
-    const frame2=await f2.contentFrame();
+    f2s[n]=await pages[n].$("frame[name='data']")
+    frame2s[n]=await f2s[n].contentFrame();
     await delay(500)
     //
-    await frame2.select('#year','2023-24')
-    await frame2.select('#sem','4')
+    await frame2s[n].select('#year','2023-24')
+    await frame2s[n].select('#sem','4')
     await delay(500)
-    await page.mouse.click(675,153)
+    await pages[n].mouse.click(675,153)
     // await frame2.click('xpath=//*[@id="rep"]/table/tbody/tr/td/input[3]')
     await delay(500)
 
-    const thTexts = await frame2.evaluate(() => {
+     thTexts[n] = await frame2s[n].evaluate(() => {
       const thElements = document.querySelectorAll('div#myreport table.plum_fieldbig tr.plum_head th');
       return Array.from(thElements, th => th.textContent);
     });
-    const attendanceArray = thTexts;
+     attendanceArray[n] = thTexts[n];
     // console.log(attendanceArray)
     // await browser.close()
     OK=true;
     console.log("hey");
-    console.log(attendanceArray);
-    return attendanceArray;
+    console.log(attendanceArray[n]);
+    return attendanceArray[n];
      
     
   }
-  finale=g();  
+  finales[n]=g();  
   res.send("Received data");
   
 })
@@ -191,13 +218,16 @@ app.get('/attendance',(req,res)=>{
   waitForCondition().then((result)=>{
     console.log(result);
     console.log("Getting");
-    const dataprocessed=finale;
-    const data = dataprocessed.then((response)=>{
+    dataprocessed[n]=finales[n];
+    const data = dataprocessed[n].then((response)=>{
     res.json({data:response});
     console.log({data:response})
+    pages[n].close();
+    pages2[n].close();
+
   });
   })
-  
+
   
 })
 getAttendance()
