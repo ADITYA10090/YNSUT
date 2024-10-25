@@ -1,5 +1,6 @@
 
 const btn = document.getElementById("btn")
+const btnL = document.getElementById("btnL")
 let dataArray;
 btn?.addEventListener("click", async ()=>{
     console.log("hi");
@@ -37,10 +38,26 @@ btn?.addEventListener("click", async ()=>{
     }
 })
 let otp;
+let U;
+let P;
 async function handleInputChange(){
         otp=document.getElementById("OTPINPUT").value;
 }
+async function handleUserChange(){
+    U=document.getElementById("UserInput").value;
+}
+async function handlePassChange(){
+    P=document.getElementById("PassInput").value;
+}
 const btn2 = document.getElementById("btn2");
+
+btnL?.addEventListener("click",async()=>{
+    try {
+        await axios.post('http://localhost:5000/credentials',{U,P});
+    } catch (error) {
+        console.log(error)
+    }
+})
 btn2?.addEventListener("click",async ()=>{
     console.log("hello");
     try {

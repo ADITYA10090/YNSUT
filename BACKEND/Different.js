@@ -1,5 +1,4 @@
 import express, { response } from 'express'
-// import Tesseract from 'tesseract.js';
 import prompt from "prompt"
 import puppeteer from 'puppeteer'
 import cors from 'cors'
@@ -90,20 +89,6 @@ async function getAttendance(){
 }
 
 
-// app.get('/mlFunction',(req,res)=>{
-  //   async function mlFunc() {
-    //     try {
-//       // const img = "https://www.imsnsit.org/imsnsit/images/captcha/captcha_1711166381.jpg"
-//       const text = await tesseract.recognize('imgtes.jpg',config)
-//       console.log("Result:", text)
-//     } catch (error) {
-  //       console.log(error.message)
-//     }
-//   }
-  
-//   mlFunc()
-// })
-
 const f_s=[];
 const links=[];
 const pages2=[];
@@ -152,63 +137,58 @@ app.get('/getcaptcha',(req,res)=>{
     await frames[n].$eval('#pwd', el => el.value = 'wrchb~0');
     await pages[n].bringToFront();
     return ;
-    }//
+    }
     const callfunc=getCaptcha();
 
     //wrchb~0
     //rpdqbd^
 })
-
 app.post('/sendcaptcha',(req,res)=>{
-  
   async function g(){
     const {otp}=await req.body
     console.log(otp);
     OTPvalue=otp;
 
     await frames[n].type("#cap",OTPvalue);
+    // await frames[n].$eval('#cap',el=>el.value=OTPvalue);
     await delay(500);
     await frames[n].click('#login')
     await delay(500)
+    await pages[n].waitForSelector("frame[name='banner']");
     f_s[n] = await pages[n].$("frame[name='banner']")
     frames[n] =  await f_s[n].contentFrame();
-    await delay(500);
+    await delay(500);//
     // await frame.click('xpath=/html/body/table/tbody/tr[1]/td/table/tbody/tr[2]/td[1]/table/tbody/tr/td[5]/a')
     await frames[n].click('body > table > tbody > tr:nth-child(1) > td > table > tbody > tr:nth-child(2) > td:nth-child(1) > table > tbody > tr > td:nth-child(5) > a')
-    // await page.mouse.click(250,107)
+    
      await delay(500)
      await pages[n].mouse.click(17,327)
-    //  await page.screenshot({path:'./image2.jpg'})
      await delay(500)//
      await pages[n].mouse.click(64,350)
      await delay(500)
     console.log("POINT 2")
-    // await page.screenshot({path:'./image3.jpg'})
-     
+
     f2s[n]=await pages[n].$("frame[name='data']")
     frame2s[n]=await f2s[n].contentFrame();
     await delay(500)
-    //
-    await frame2s[n].select('#year','2023-24')
-    await frame2s[n].select('#sem','4')
+
+    await frame2s[n].select('#year','2024-25')
+    await frame2s[n].select('#sem','5')
     await delay(500)
     await pages[n].mouse.click(675,153)
-    // await frame2.click('xpath=//*[@id="rep"]/table/tbody/tr/td/input[3]')
+
     await delay(500)
 
-     thTexts[n] = await frame2s[n].evaluate(() => {
+    thTexts[n] = await frame2s[n].evaluate(() => {
       const thElements = document.querySelectorAll('div#myreport table.plum_fieldbig tr.plum_head th');
       return Array.from(thElements, th => th.textContent);
     });
      attendanceArray[n] = thTexts[n];
-    // console.log(attendanceArray)
-    // await browser.close()
     OK=true;
     console.log("hey");
     console.log(attendanceArray[n]);
     return attendanceArray[n];
-     
-    
+
   }
   finales[n]=g();  
   res.send("Received data");
@@ -222,13 +202,13 @@ app.get('/attendance',(req,res)=>{
     const data = dataprocessed[n].then((response)=>{
     res.json({data:response});
     console.log({data:response})
+
     pages[n].close();
     pages2[n].close();
 
   });
-  })
+})
 
-  
 })
 getAttendance()
 
